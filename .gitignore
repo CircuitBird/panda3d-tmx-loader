@@ -1,0 +1,16 @@
+# Byte-compiled files
+*.pyc
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# IDE settings
+.idea/
+.vscode/
+*.code-workspace
+
+# Packaging
+dist/
+*.egg-info/

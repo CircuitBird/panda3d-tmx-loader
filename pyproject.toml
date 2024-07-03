@@ -1,0 +1,39 @@
+[project]
+name = "panda3d-tmx-loader"
+version = "0.0.0"
+description = "A TMX (Tiled map) loader for Panda3D"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = [
+    # Must match requirements.txt and .pre-commit-config.yaml:
+    "attrs>=21.3.0",
+    "panda3d>=1.10",
+    "pytiled-parser==2.2.5",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/CircuitBird/panda3d-tmx-loader"
+"Bug Tracker" = "https://github.com/CircuitBird/panda3d-tmx-loader/issues"
+
+[build-system]
+requires = ["flit_core>=3.4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "tmx_loader"
+
+[tool.black]
+skip-string-normalization = true
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+select = ["E", "F", "N", "B", "I"]
+fixable = ["E", "F", "I"]

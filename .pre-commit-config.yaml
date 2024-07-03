@@ -1,0 +1,31 @@
+repos:
+
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.4.2  # Must match requirements-dev.txt
+    hooks:
+      - id: black
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.0  # Must match requirements-dev.txt
+    hooks:
+      - id: ruff
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.1  # Must match requirements-dev.txt
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          # Must match pyproject.toml and requirements.txt:
+          - attrs>=21.3.0
+          - panda3d>=1.10
+          - pytiled-parser==2.2.5
+          # Must match requirements-dev.txt:
+          - types-panda3d==0.4.1
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
