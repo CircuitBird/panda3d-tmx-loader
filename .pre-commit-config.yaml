@@ -17,7 +17,7 @@ repos:
         additional_dependencies:
           # Must match pyproject.toml and requirements.txt:
           - attrs>=21.3.0
-          - pytiled-parser==2.2.5
+          - pytiled_parser==2.2.5
           # Must match requirements-dev.txt:
           - types-panda3d==0.4.1
 
