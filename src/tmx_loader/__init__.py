@@ -196,7 +196,7 @@ class MapLoader:
             | HEXAGONAL_ROTATION_FLAG
         )
         for tileset in self.tiled_map.tilesets.values():
-            if 0 < gid - tileset.firstgid <= tileset.tile_count:
+            if 0 <= gid - tileset.firstgid < tileset.tile_count:
                 return tileset
         raise ValueError(f"Could not find tileset for tile {gid!r}")
 
