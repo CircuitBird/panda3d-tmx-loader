@@ -133,9 +133,7 @@ def load_collider(tiled_object: ptp_obj.TiledObject) -> p3d.CollisionSolid:
     if not isinstance(tiled_object, ptp_obj.Rectangle):
         raise UnsupportedError("Non-rectangular colliders not yet supported")
     width, height = tiled_object.size
-    collider = p3d.CollisionBox(
-        (-width / 2, -16, -height / 2), (width / 2, 16, height / 2)
-    )
+    collider = p3d.CollisionBox((0, -16, -height), (width, 16, 0))
     return collider
 
 
@@ -217,6 +215,9 @@ class MapLoader:
             height_scale = object_height / self.tiled_map.tile_size.height
             tile_path.set_pos(0, 0, object_height)
             tile_path.set_scale(width_scale, 1, height_scale)
+            collision_node = self.collider_handler.get_collider(tiled_object.gid)
+            if collision_node is not None:
+                tile_path.attach_new_node(collision_node)
         object_path.set_pos(tiled_object.coordinates.x, 0, -tiled_object.coordinates.y)
         object_path.set_r(tiled_object.rotation)
         return object_path
@@ -244,10 +245,8 @@ class MapLoader:
                 tile_arranger.add_tile(gid, i, j)
                 collision_node = self.collider_handler.get_collider(gid)
                 if collision_node is not None:
-                    x = (i + 0.5) * tile_width
-                    y = (j + 0.5) * tile_height
                     collider_path = collider_parent.attach_new_node('collider_location')
-                    collider_path.set_pos(x, 0, -y)
+                    collider_path.set_pos(i * tile_width, 0, -j * tile_height)
                     collider_path.attach_new_node(collision_node)
         cluster_node = tile_arranger.generate_node()
         cluster_path = p3d.NodePath(cluster_node)
