@@ -1,4 +1,5 @@
 import pathlib
+from collections import defaultdict
 from collections.abc import MutableMapping
 from typing import Final
 
@@ -15,6 +16,13 @@ HEXAGONAL_ROTATION_FLAG: Final = 0x10000000
 
 class UnsupportedError(ValueError):
     pass
+
+
+@attrs.define
+class Tile:
+    gid: int
+    x: int
+    y: int
 
 
 def _make_default_tile_vertex_data():
@@ -238,20 +246,26 @@ class MapLoader:
     def load_tile_layer(self, layer: ptp.TileLayer) -> p3d.NodePath:
         tile_width, tile_height = self.tiled_map.tile_size
         layer_node = p3d.NodePath(layer.name)
-        collider_parent = p3d.NodePath('cluster_collider')
-        tile_arranger = TileArranger(self.tiled_map.tilesets[1])
+        collider_parent = layer_node.attach_new_node('colliders')
+        tiles_by_layer = defaultdict[int, list[Tile]](list)
         for j, row in enumerate(layer.data or ()):
             for i, gid in enumerate(row):
-                tile_arranger.add_tile(gid, i, j)
+                if not gid:
+                    continue
+                tiles_by_layer[self.find_source(gid).firstgid].append(Tile(gid, i, j))
                 collision_node = self.collider_handler.get_collider(gid)
                 if collision_node is not None:
                     collider_path = collider_parent.attach_new_node('collider_location')
                     collider_path.set_pos(i * tile_width, 0, -j * tile_height)
                     collider_path.attach_new_node(collision_node)
-        cluster_node = tile_arranger.generate_node()
-        cluster_path = p3d.NodePath(cluster_node)
-        collider_parent.reparent_to(cluster_path)
-        cluster_path.reparent_to(layer_node)
+        for firstgid, tiles in tiles_by_layer.items():
+            tileset = self.tiled_map.tilesets[firstgid]
+            if tileset.image is None:
+                continue
+            tile_arranger = TileArranger(tileset)
+            for tile in tiles:
+                tile_arranger.add_tile(tile.gid, tile.x, tile.y)
+            layer_node.attach_new_node(tile_arranger.generate_node())
         return layer_node
 
     def load_object_layer(self, layer: ptp.ObjectLayer) -> p3d.NodePath:
